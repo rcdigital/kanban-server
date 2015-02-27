@@ -15,8 +15,7 @@ def users(request, format= None):
         return Response(serializer.data)
 
     if request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = UsersSerializer(data = data)
+        serializer = UsersSerializer(data = request.data)
 
         if serializer.is_valid():
             serializer.save()
