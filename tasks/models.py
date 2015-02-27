@@ -24,7 +24,7 @@ class Tasks(models.Model):
     story = models.ForeignKey(Stories, verbose_name='Backlog', null = True, blank = True)
     estimate_time = models.IntegerField('Estimado', null= True, blank= True)
     finish_time = models.IntegerField('Tempo Realizado', null= True, blank= True)
-    state = models.CharField('status', max_length =255, choices=STATUS_CHOICES, default='todo')
+    status = models.CharField('status', max_length =255, choices=STATUS_CHOICES, default='todo')
     created_by = models.ForeignKey(Members, verbose_name='Criado por')
     doing_by = models.ForeignKey(Members, verbose_name='Feito por', related_name="doing_by")
     created_date = models.DateTimeField(auto_now_add=True)

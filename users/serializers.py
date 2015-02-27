@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from users.models import Users
+from users.models import KanbanUsers 
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Users
-        fields = ('id', 'name', 'email', 'thumb')
+        model = KanbanUsers 
+        fields = ('id', 'name', 'email', 'thumb',)

@@ -3,7 +3,7 @@ from django.db import models
 import hashlib
 import random
 
-from users.models import Users
+from users.models import KanbanUsers
 # Create your models here.
 
 def _create_hash():
@@ -12,7 +12,7 @@ def _create_hash():
 class Companies(models.Model):
     name = models.CharField('Nome', max_length=255)
     thumb = models.FileField(upload_to='company_thumbs/')
-    owner = models.ForeignKey(Users)
+    owner = models.ForeignKey(KanbanUsers)
     hash_id = models.CharField('hash', max_length= 255 ,default = _create_hash, unique = True)
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -39,7 +39,7 @@ class Roles (models.Model):
 
 class Members (models.Model):
     company = models.ForeignKey(Companies, verbose_name='Empresa')
-    member = models.ForeignKey(Users, verbose_name='membro')
+    member = models.ForeignKey(KanbanUsers, verbose_name='membro')
     role = models.ForeignKey(Roles);
     hash_id = models.CharField('hash', max_length= 255 ,default = _create_hash, unique = True)
     created_date = models.DateTimeField(auto_now_add=True)
