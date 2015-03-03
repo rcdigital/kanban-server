@@ -11,8 +11,8 @@ def _create_hash():
 
 class Companies(models.Model):
     name = models.CharField('Nome', max_length=255)
-    thumb = models.FileField(upload_to='company_thumbs/')
-    owner = models.ForeignKey(KanbanUsers)
+    thumb = models.FileField(upload_to='company_thumbs/', blank=True, null = True)
+    owner = models.ForeignKey(KanbanUsers, related_name='companies')
     hash_id = models.CharField('hash', max_length= 255 ,default = _create_hash, unique = True)
     created_date = models.DateTimeField(auto_now_add=True)
 
