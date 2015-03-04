@@ -20,8 +20,12 @@ class MembersSerializer (serializers.ModelSerializer):
         fields = ('member', 'role', 'hash_id',)
 
 class CompaniesSerializer (serializers.ModelSerializer):
-    members = MembersSerializer(many = True, read_only = True)
-    owner = UserSerializer(many= False, read_only = True)
     class Meta: 
         model = Companies
-        fields = ('name', 'thumb', 'owner', 'hash_id', 'members',)
+        fields = ('name', 'thumb', 'owner', 'hash_id',)
+
+class CompaniesRetrieveSerializer (serializers.ModelSerializer):
+    owner = UserSerializer
+    class Meta: 
+        model = Companies
+        fields = ('name', 'thumb', 'owner', 'hash_id',)

@@ -33,8 +33,25 @@ class UsersTestCase(APITestCase):
         """
             Create new company
         """
-        data = {'id': 1, 'name': 'RC Digital', 'owner': 1}
-        response = self.client.post('/api/users/1/companies/', data, format='json')
-        print response
+
+        data = {'id': 1,'name': 'optimus primal', 'email': 'optimus.primal@transformers.com'}
+        response = self.client.post('/api/users/', data, format='json')
+
+        data = {'id': 1, 'name': 'RC Digital', 'owner': response.data['id']}
+        response = self.client.post('/api/users/'+ str(response.data['id']) +'/companies/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_retrieve_company(self):
+        """
+            Retrive user companies
+        """
+
+        data = {'id': 1,'name': 'optimus primal', 'email': 'optimus.primal@transformers.com'}
+        user_response = self.client.post('/api/users/', data, format='json')
+
+        data = {'id': 1, 'name': 'RC Digital', 'owner': user_response.data['id']}
+        response = self.client.post('/api/users/'+ str(user_response.data['id']) +'/companies/', data, format='json')
+
+
+        response = self.client.get('/api/users/'+ str(user_response.data['id']) +'/companies/', format='json')
+        self.assertEqual(response.status_code, 200)
