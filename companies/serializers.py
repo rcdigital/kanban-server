@@ -11,21 +11,30 @@ class UserSerializer(serializers.ModelSerializer):
 class RolesSerializer (serializers.ModelSerializer):
     class Meta: 
         model = Roles
-        fields  = ('name', 'color',)
-
-class MembersSerializer (serializers.ModelSerializer):
-    role = RolesSerializer(read_only = True)
-    class Meta: 
-        model = Members
-        fields = ('member', 'role', 'hash_id',)
+        fields  = ('id','name', 'color', 'company',)
 
 class CompaniesSerializer (serializers.ModelSerializer):
     class Meta: 
         model = Companies
-        fields = ('name', 'thumb', 'owner', 'hash_id',)
+        fields = ('id','name', 'thumb', 'owner', 'hash_id',)
 
 class CompaniesRetrieveSerializer (serializers.ModelSerializer):
     owner = UserSerializer
     class Meta: 
         model = Companies
-        fields = ('name', 'thumb', 'owner', 'hash_id',)
+        fields = ('id', 'name', 'thumb', 'owner', 'hash_id',)
+
+class MembersSerializer (serializers.ModelSerializer):
+    class Meta: 
+        model = Members
+        fields = ('id', 'member', 'company', 'role', 'hash_id',)
+
+class MembersRetrieveSerializer (serializers.ModelSerializer):
+    role = RolesSerializer(read_only = True)
+    member = UserSerializer(read_only = True)
+    company = CompaniesSerializer(read_only = True)
+    class Meta: 
+        model = Members
+        fields = ('id', 'member', 'company', 'role', 'hash_id',)
+
+

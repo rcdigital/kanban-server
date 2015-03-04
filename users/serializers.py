@@ -9,3 +9,8 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = KanbanUsers 
         fields = ('id', 'name', 'email', 'thumb', 'companies',)
+
+class UsersDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KanbanUsers 
+        fields = ('id', 'name', 'email', 'thumb',)

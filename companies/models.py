@@ -38,9 +38,9 @@ class Roles (models.Model):
         verbose_name_plural = 'Papéis'
 
 class Members (models.Model):
-    company = models.ForeignKey(Companies, verbose_name='Empresa')
-    member = models.ForeignKey(KanbanUsers, verbose_name='membro')
-    role = models.ForeignKey(Roles);
+    company = models.ForeignKey(Companies, related_name="company", verbose_name='Empresa')
+    member = models.ForeignKey(KanbanUsers, related_name="member", verbose_name='membro')
+    role = models.ForeignKey(Roles, null= True, blank= True);
     hash_id = models.CharField('hash', max_length= 255 ,default = _create_hash, unique = True)
     created_date = models.DateTimeField(auto_now_add=True)
 
