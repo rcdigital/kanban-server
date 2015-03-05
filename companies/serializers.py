@@ -13,6 +13,11 @@ class RolesSerializer (serializers.ModelSerializer):
         model = Roles
         fields  = ('id','name', 'color', 'company',)
 
+class CompaniesTestSerializer (serializers.ModelSerializer):
+    class Meta: 
+        model = Companies
+        fields = ('id','name',  'owner',)
+
 class CompaniesSerializer (serializers.ModelSerializer):
     class Meta: 
         model = Companies

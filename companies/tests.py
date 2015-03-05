@@ -21,13 +21,13 @@ def simulate_insert_data():
     client.post('/api/users/'+ str(user_response.data['id']) +'/companies/', data, format='json')
 
     data = {'id': 1, 'company': 1, 'member': 3}
-    client.post('/api/company/1/member/', data, format='json')
+    client.post('/api/company/1/members/', data, format='json')
 
     data = {'id': 2, 'company': 1, 'member': 1}
-    client.post('/api/company/1/member/', data, format='json')
+    client.post('/api/company/1/members/', data, format='json')
 
     data = {'id': 3, 'company': 1, 'member': 2}
-    client.post('/api/company/1/member/', data, format='json')
+    client.post('/api/company/1/members/', data, format='json')
 
     data = {'id': 1, 'name': 'Development', 'color': '#f00', 'company': 1}
     client.post('/api/company/1/roles/', data, format='json')
@@ -37,10 +37,10 @@ class CompanyMembersList(APITestCase):
 
     def test_members_list(self):
         """
-            Retrieve Members list based on logged user
+            Retrieve Company Members list based on logged user
         """
         simulate_insert_data()
-        response = self.client.get('/api/company/1/member/', format= 'json')
+        response = self.client.get('/api/company/1/members/', format= 'json')
         self.assertEqual(response.status_code, 200)
 
     def test_retrieve_member(self):
@@ -48,7 +48,7 @@ class CompanyMembersList(APITestCase):
             Retrieve specific member
         """
         simulate_insert_data()
-        response = self.client.get('/api/company/1/member/2', format= 'json')
+        response = self.client.get('/api/company/1/member/2/', format= 'json')
         self.assertEqual(response.status_code, 200)
 
 class CompanyRoles(APITestCase):

@@ -7,12 +7,14 @@ from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from users.models import KanbanUsers
 from users.serializers import UsersSerializer 
-import json
 
 def simulate_data_storage():
     client = APIClient()
     data = {'id': 1,'name': 'optimus primal', 'email': 'optimus.primal@transformers.com'}
-    client.post('/api/users/', data, format='json')
+    response = client.post('/api/users/', data, format='json')
+
+    data = {'id': 1, 'name': 'RC Digital', 'owner': response.data['id']}
+    response_company = client.post('/api/users/'+ str(response.data['id']) +'/companies/', data, format='json')
 
 class UsersTestCase(APITestCase):
     client = APIClient()
@@ -58,7 +60,6 @@ class UserCompanyTestCase(APITestCase):
         """
             Create new company
         """
-
         data = {'id': 1,'name': 'optimus primal', 'email': 'optimus.primal@transformers.com'}
         response = self.client.post('/api/users/', data, format='json')
 
@@ -66,7 +67,7 @@ class UserCompanyTestCase(APITestCase):
         response = self.client.post('/api/users/'+ str(response.data['id']) +'/companies/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_retrieve_company(self):
+    def test_retrieve_companies(self):
         """
             Retrive user companies
         """
@@ -79,11 +80,24 @@ class UserCompanyTestCase(APITestCase):
 
         data = {'id': 1, 'company': response.data['id'], 'member': user_response.data['id']}
 
-        response = self.client.post('/api/company/'+ str(response.data['id']) +'/member/', data, format='json')
+        response = self.client.post('/api/company/'+ str(response.data['id']) +'/members/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.get('/api/users/'+ str(user_response.data['id']) + '/companies/', format='json')
+        print response.data
+        self.assertEqual(response.status_code, 200)
 
     def test_edit_company_data(self):
         """
             Edit company data
         """
+        simulate_data_storage()
+        data = {'id': 1, 'name': 'RC Comunicacao', 'owner': 1}
+        response = self.client.put('/api/users/1/companies/1/', data, format='json')
+        self.assertEqual(response.data, data)
+        self.assertEqual(response.status_code, 200)
 
+    def test_remove_company(self):
+        simulate_data_storage()
+        response = self.client.delete('/api/users/1/companies/1/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

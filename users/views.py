@@ -6,7 +6,7 @@ from django.http import Http404
 
 from users.models import KanbanUsers 
 from users.serializers import UsersSerializer, UsersDetailSerializer
-from companies.serializers import CompaniesSerializer, CompaniesRetrieveSerializer
+from companies.serializers import CompaniesSerializer, CompaniesRetrieveSerializer, CompaniesTestSerializer
 from companies.models import Companies
 
 
@@ -72,7 +72,7 @@ class KanbanUserCompaniesDetail(APIView):
 
     def put(self, request, pk, company_id, format=None):
         company = self.get_object(pk, company_id)
-        serializer = CompaniesSerializer(company, data = request.data)
+        serializer = CompaniesTestSerializer(company, data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
