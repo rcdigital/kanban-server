@@ -6,7 +6,7 @@ from users.models import KanbanUsers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = KanbanUsers 
-        fields = ('id', 'name', 'email', 'thumb', 'companies',)
+        fields = ('id', 'name', 'email', 'thumb',)
 
 class RolesSerializer (serializers.ModelSerializer):
     class Meta: 

@@ -35,6 +35,18 @@ def simulate_insert_data():
 class CompanyMembersList(APITestCase):
     client = APIClient()
 
+    def test_add_new_member(self):
+        """
+           Add new member into company 
+        """
+        simulate_insert_data()
+        data = {'id': 4,'name': 'Scruman User', 'email': 'user@scruman.com'}
+        user_response = self.client.post('/api/users/', data, format='json')
+
+        data = {'id': 4, 'company': 1, 'member': user_response.data['id']}
+        response = self.client.post('/api/company/1/members/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_members_list(self):
         """
             Retrieve Company Members list based on logged user
@@ -50,6 +62,22 @@ class CompanyMembersList(APITestCase):
         simulate_insert_data()
         response = self.client.get('/api/company/1/member/2/', format= 'json')
         self.assertEqual(response.status_code, 200)
+
+    def test_remove_member_from_company(self):
+        """
+            Retrieve specific member
+        """
+        simulate_insert_data()
+        response = self.client.delete('/api/company/1/member/2/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_edit_member_role(self):
+        simulate_insert_data()
+        data = {'role': 1}
+        response = self.client.put('/api/company/1/member/2/role/', data, format= 'json')
+        print response
+        self.assertEqual(response.status_code, 200)
+
 
 class CompanyRoles(APITestCase):
     client = APIClient()

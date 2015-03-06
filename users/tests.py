@@ -14,7 +14,7 @@ def simulate_data_storage():
     response = client.post('/api/users/', data, format='json')
 
     data = {'id': 1, 'name': 'RC Digital', 'owner': response.data['id']}
-    response_company = client.post('/api/users/'+ str(response.data['id']) +'/companies/', data, format='json')
+    client.post('/api/users/'+ str(response.data['id']) +'/companies/', data, format='json')
 
 class UsersTestCase(APITestCase):
     client = APIClient()
@@ -84,7 +84,6 @@ class UserCompanyTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         response = self.client.get('/api/users/'+ str(user_response.data['id']) + '/companies/', format='json')
-        print response.data
         self.assertEqual(response.status_code, 200)
 
     def test_edit_company_data(self):

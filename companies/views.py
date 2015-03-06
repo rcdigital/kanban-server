@@ -23,7 +23,7 @@ class CompanyMembersList(APIView):
 class MemberDetails(APIView):
     def get_object(self, company_pk, member_id):
         try:
-            return Members.objects.get(id = member_id, company__id=company_pk)
+            return Members.objects.filter(id = member_id, company__id=company_pk)
         except Members.DoesNotExist:
             raise Http404
 
@@ -31,6 +31,11 @@ class MemberDetails(APIView):
         member = self.get_object(company_pk, member_id)  
         serializer = MembersRetrieveSerializer(member, many= True)
         return Response(serializer.data)
+
+    def delete(self, request, company_pk, member_id, format=None):
+        member = self.get_object(company_pk, member_id)
+        member.delete()
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
 class RolesList(APIView):
 
@@ -45,3 +50,20 @@ class RolesList(APIView):
         queryset = Roles.objects.filter(company__id= company_pk)  
         serializer = RolesSerializer(queryset, many= True)
         return Response(serializer.data)
+
+class MemberRoleDetail(APIView):
+    def get_object(self, company_pk, member_id):
+        try:
+            return Members.objects.get(id = member_id, company__id = company_pk)
+        except Members.DoesNotExist:
+            raise Http404
+
+    def put(self, request, company_pk, member_id, format=None):
+        member = self.get_object(company_pk, member_id)
+        serializer = MembersRetrieveSerializer(member, data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print serializer.data 
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
