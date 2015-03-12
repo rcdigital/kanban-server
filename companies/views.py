@@ -59,11 +59,12 @@ class MemberRoleDetail(APIView):
             raise Http404
 
     def put(self, request, company_pk, member_id, format=None):
+        role = Roles.objects.get(id = request.data['role'])
         member = self.get_object(company_pk, member_id)
+        member.role = role
         serializer = MembersRetrieveSerializer(member, data = request.data)
         if serializer.is_valid():
             serializer.save()
-            print serializer.data 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

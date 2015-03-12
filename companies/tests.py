@@ -65,17 +65,19 @@ class CompanyMembersList(APITestCase):
 
     def test_remove_member_from_company(self):
         """
-            Retrieve specific member
+            Remove an specific member
         """
         simulate_insert_data()
         response = self.client.delete('/api/company/1/member/2/', format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_edit_member_role(self):
+        """
+            Edit member role
+        """
         simulate_insert_data()
         data = {'role': 1}
         response = self.client.put('/api/company/1/member/2/role/', data, format= 'json')
-        print response
         self.assertEqual(response.status_code, 200)
 
 
