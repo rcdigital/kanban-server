@@ -1,8 +1,5 @@
 from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
-from users.models import KanbanUsers
-from users.serializers import UsersSerializer 
-from companies.models import Members
 
 # Create your tests here.
 
