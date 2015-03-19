@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 
-from backlog.serializers import BacklogSerializer, BacklogSerializerRetrieve
-from backlog.models import Backlogs
+from backlog.serializers import BacklogSerializer, BacklogSerializerRetrieve, StorySerializer, StorySerializerPost
+from backlog.models import Backlogs, Stories
 
 class BacklogList(APIView):
     def post(self, request, project_id, format=None):
@@ -21,49 +21,59 @@ class BacklogList(APIView):
         return Response(serializer.data)
 
 class BacklogDetails(APIView):
-    def get_object(self, project_id):
+    def get_object(self, project_id, backlog_id):
         try:
-            return Backlogs.objects.filter(project = project_id)
+            return Backlogs.objects.get(project = project_id, id = backlog_id)
         except Backlogs.DoesNotExist:
             raise Http404
 
-    def get(self, request, company_pk, member_id, format=None):
-        member = self.get_object(company_pk, member_id)  
-        serializer = MembersRetrieveSerializer(member, many= True)
+    def get(self, request, project_id, backlog_id, format=None):
+        backlog = self.get_object(project_id, backlog_id)  
+        serializer = BacklogSerializerRetrieve(backlog , many= True)
         return Response(serializer.data)
+    
+    def put(self, request, project_id, backlog_id, format=None):
+        backlog = self.get_object(project_id, backlog_id)
+        serializer = BacklogSerializerRetrieve(backlog, data = request.data, many= False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, company_pk, member_id, format=None):
-        member = self.get_object(company_pk, member_id)
-        member.delete()
+    def delete(self, request, project_id, backlog_id, format=None):
+        backlog = self.get_object(project_id, backlog_id)
+        backlog.delete()
         return Response(status = status.HTTP_204_NO_CONTENT)
 
-class RolesList(APIView):
+class BacklogStories(APIView):
+    def get(self, request, backlog_id, format=None):
+        stories = Stories.objects.filter(backlog__id = backlog_id)
+        serializer = StorySerializer(stories, many= True)
+        return Response(serializer.data)
 
-    def post(self, request, company_pk, format=None):
-        serializer = RolesSerializer(data= request.data)
+    def post(self, request, backlog_id, format=None):
+        serializer = StorySerializerPost(data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status= status.HTTP_201_CREATED)
         return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, company_pk, format=None):
-        queryset = Roles.objects.filter(company__id= company_pk)  
-        serializer = RolesSerializer(queryset, many= True)
+class StoryDetails(APIView):
+    def get_object(self, backlog_id ,story_id):
+        try:
+            return Stories.objects.get(backlog__id = backlog_id, id = story_id)
+        except Backlogs.DoesNotExist:
+            raise Http404 
+
+    def get(self, request, backlog_id, story_id, format=None):
+        story = self.get_object(backlog_id, story_id)
+        serializer = StorySerializer(story)
         return Response(serializer.data)
 
-class MemberRoleDetail(APIView):
-    def get_object(self, company_pk, member_id):
-        try:
-            return Members.objects.get(id = member_id, company__id = company_pk)
-        except Members.DoesNotExist:
-            raise Http404
-
-    def put(self, request, company_pk, member_id, format=None):
-        role = Roles.objects.get(id = request.data['role'])
-        member = self.get_object(company_pk, member_id)
-        member.role = role
-        serializer = MembersRetrieveSerializer(member, data = request.data)
+    def put(self, request, backlog_id, story_id, format = None):
+        story = self.get_object(backlog_id, story_id)
+        serializer = StorySerializerPost(story, data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

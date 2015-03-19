@@ -33,6 +33,12 @@ def simulate_insert_data():
     data = {'id': 1 ,'name': 'Site 1.0', 'project': 1 }
     client.post('/api/project/1/backlogs/', data, format='json')
 
+    data = {'name': 'First Deliver', 'backlog': 1, 'order': 1}
+    client.post('/api/backlog/1/stories/', data, format='json')
+
+    data = {'name': 'Secondo Deliver', 'backlog': 1, 'order': 2}
+    client.post('/api/backlog/1/stories/', data, format='json')
+
 client = APIClient()
 
 class BacklogList(APITestCase):
@@ -51,4 +57,67 @@ class BacklogList(APITestCase):
         """
         simulate_insert_data()
         response = client.get('/api/project/1/backlogs/', format='json')
+        self.assertEqual(response.status_code, 200)
+
+
+class BacklogDetails(APITestCase):
+    def test_update_backlog(self):
+        """
+            update backlog.
+        """
+        simulate_insert_data()
+        data = {'name': 'Site 2.0'}
+        response = client.put('/api/project/1/backlog/1/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_backlog(self):
+        """
+            delete backlog
+        """
+        simulate_insert_data()
+        response = client.delete('/api/project/1/backlog/1/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+class StoryList(APITestCase):
+    def test_insert_story(self):
+        """
+           Insert new story 
+        """
+        simulate_insert_data()
+        data = {'name': 'First Deliver', 'backlog': 1, 'order': 1}
+        response = client.post('/api/backlog/1/stories/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_story_list(self):
+        """
+           Retrieve sotries 
+        """
+        simulate_insert_data()
+        response = client.get('/api/backlog/1/stories/', format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieve_story(self):
+        """
+           Retrieve story by id 
+        """
+        simulate_insert_data()
+        response = client.get('/api/backlog/1/story/2/', format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_story_name(self):
+        """
+           Retrieve sotry by id 
+        """
+        simulate_insert_data()
+        data = {'name': 'Changing story'}
+        response = client.put('/api/backlog/1/story/2/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_story_name(self):
+        """
+           edit story name 
+        """
+        simulate_insert_data()
+        data = {'name': 'Changing story', 'order': 3}
+        response = client.put('/api/backlog/1/story/2/', data, format='json')
         self.assertEqual(response.status_code, 200)

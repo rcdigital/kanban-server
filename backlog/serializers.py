@@ -17,4 +17,9 @@ class StorySerializer (serializers.ModelSerializer):
     backlog = BacklogSerializer(read_only = True)
     class Meta:
         model = Stories
+        fields = ('name', 'backlog', 'order', 'hash_id', )
+
+class StorySerializerPost (serializers.ModelSerializer):
+    class Meta:
+        model = Stories
         fields = ('name', 'backlog', 'order', 'hash_id',)
