@@ -9,7 +9,15 @@ from users.serializers import UsersSerializer, UsersDetailSerializer
 from companies.serializers import CompaniesSerializer, CompaniesRetrieveSerializer, CompaniesTestSerializer
 from companies.models import Companies
 
+import requests
+import json
+from kanban import local_settings
 
+headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'X-Requested-With, content-type'
+        }
 class KanbanUserList(APIView):
 
     def get(self, request, format=None):
@@ -87,3 +95,28 @@ class KanbanUserCompaniesDetail(APIView):
         company = self.get_object(pk, company_id)
         serializer = CompaniesRetrieveSerializer(company)
         return Response(serializer.data)
+
+class GoogleOauth(APIView):
+
+    def post(self, request, format= None):
+        access_token_url = 'https://accounts.google.com/o/oauth2/token'
+        people_api_url = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect'
+        payload = dict(client_id=request.data['clientId'],
+                   redirect_uri=request.data['redirectUri'],
+                   client_secret=local_settings.GOOGLE_SECRET,
+                   code=request.data['code'],
+                   grant_type='authorization_code')
+
+        r = requests.post(access_token_url, data = payload)
+        token = json.loads(r.text)
+        headers = {'Authorization': 'Bearer {0}'.format(token['access_token'])}
+        r = requests.get(people_api_url, headers= headers)
+        profile = json.loads(r.text)
+        user = KanbanUsers.objects.get(open_id = profile['sub'])
+        if user:
+            serializer = UsersSerializer(user)
+            return Response(serializer.data)
+        user = KanbanUsers(name = profile['name'], thumb = profile['picture'], open_id = profile['sub'], email= profile['email'])
+        user.save()
+        serializer = UsersSerializer(user)
+        return Response(serializer.data, status = status.HTTP_201_CREATED)

@@ -6,6 +6,7 @@ SECRET_KEY = '-a+(ijzs_quv2z&$!n@(-n794hl+4e#iwgo)z3#@i!&3$di2&l'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 LANGUAGE_CODE = 'pt-br'
+GOOGLE_SECRET = 'v_VKSBUbpqDItgMi7A37UppH'
 
 DATABASES = {
     'default': {

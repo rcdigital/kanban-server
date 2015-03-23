@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'users',
     'companies',
     'projects',
@@ -48,6 +49,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -88,6 +90,21 @@ STATIC_ROOT = BASE_DIR + local_settings.STATIC_URL
 MEDIA_ROOT =  BASE_DIR + local_settings.MEDIA_URL
 MEDIA_URL = local_settings.MEDIA_URL
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:9000' # Here was the problem indeed and it has to be http://localhost:3000, not http://localhost:3000/
+)
+
+CORS_ALLOW_HEADERS = (
+        'x-requested-with',
+        'content-type',
+        'accept',
+        'origin',
+        'authorization',
+        'x-csrftoken',
+        'Access-Control-Allow-Origin',
+    )
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
